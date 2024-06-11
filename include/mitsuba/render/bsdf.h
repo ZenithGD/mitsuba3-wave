@@ -4,6 +4,8 @@
 #include <mitsuba/render/interaction.h>
 #include <drjit/vcall.h>
 
+#include <mitsuba/render/plt.h>
+
 NAMESPACE_BEGIN(mitsuba)
 
 /**
@@ -319,6 +321,60 @@ public:
            Mask active = true) const = 0;
 
     /**
+     * \brief Importance sample the wBSDF model
+     *
+     * The function returns a sample data structure along with the importance
+     * weight, which is the value of the BSDF divided by the probability
+     * density, and multiplied by the cosine foreshortening factor (if needed
+     * --- it is omitted for degenerate BSDFs like smooth mirrors/dielectrics).
+     *
+     * If the supplied context data structures selects subset of components in
+     * a multi-lobe BRDF model, the sampling is restricted to this subset.
+     * Depending on the provided transport type, either the BSDF or its adjoint
+     * version is sampled.
+     *
+     * When sampling a continuous/non-delta component, this method also
+     * multiplies by the cosine foreshortening factor with respect to the
+     * sampled direction.
+     *
+     * \param ctx
+     *     A context data structure describing which lobes to sample,
+     *     and whether radiance or importance are being transported.
+     *
+     * \param si
+     *     A surface interaction data structure describing the underlying
+     *     surface position. The incident direction is obtained from
+     *     the field <tt>si.wi</tt>.
+     *
+     * \param sample1
+     *     A uniformly distributed sample on \f$[0,1]\f$. It is used
+     *     to select the BSDF lobe in multi-lobe models.
+     *
+     * \param sample2
+     *     A uniformly distributed sample on \f$[0,1]^2\f$. It is
+     *     used to generate the sampled direction.
+     *
+     * \return A pair (bs, value) consisting of
+     *
+     *     bs:    Sampling record, indicating the sampled direction, PDF values
+     *            and other information. The contents are undefined if sampling
+     *            failed.
+     *
+     *     value: The wBSDF value divided by the probability (multiplied by the
+     *            cosine foreshortening factor when a non-delta component is
+     *            sampled). A zero spectrum indicates that sampling failed.
+     *            
+     *            It also contains the polarization state and the coherence
+     *            information of the wave packet.
+     */
+    virtual std::pair<BSDFSample3f, GeneralizedRadiance<Float, Spectrum>>
+    wbsdf_sample( const BSDFContext &ctx,
+           const SurfaceInteraction3f &si,
+           Float sample1,
+           const Point2f &sample2,
+           Mask active = true) const;
+
+    /**
      * \brief Evaluate the BSDF f(wi, wo) or its adjoint version f^{*}(wi, wo)
      * and multiply by the cosine foreshortening term.
      *
@@ -347,6 +403,36 @@ public:
                           const SurfaceInteraction3f &si,
                           const Vector3f &wo,
                           Mask active = true) const = 0;
+
+    /**
+     * \brief Evaluate the wBSDF f(wi, wo) or its adjoint version f^{*}(wi, wo)
+     * and multiply by the cosine foreshortening term.
+     *
+     * Based on the information in the supplied query context \c ctx, this
+     * method will either evaluate the entire BSDF or query individual
+     * components (e.g. the diffuse lobe). Only smooth (i.e. non Dirac-delta)
+     * components are supported: calling ``eval()`` on a perfectly specular
+     * material will return zero.
+     *
+     * Note that the incident direction does not need to be explicitly
+     * specified. It is obtained from the field <tt>si.wi</tt>.
+     *
+     * \param ctx
+     *     A context data structure describing which lobes to evaluate,
+     *     and whether radiance or importance are being transported.
+     *
+     * \param si
+     *     A surface interaction data structure describing the underlying
+     *     surface position. The incident direction is obtained from
+     *     the field <tt>si.wi</tt>.
+     *
+     * \param wo
+     *     The outgoing direction
+     */
+    virtual GeneralizedRadiance<Float, Spectrum> wbsdf_eval(const BSDFContext &ctx,
+                          const SurfaceInteraction3f &si,
+                          const Vector3f &wo,
+                          Mask active = true) const;
 
     /**
      * \brief Compute the probability per unit solid angle of sampling a
@@ -378,6 +464,37 @@ public:
                       const SurfaceInteraction3f &si,
                       const Vector3f &wo,
                       Mask active = true) const = 0;
+
+    /**
+     * \brief Compute the probability per unit solid angle of sampling a
+     * given direction
+     *
+     * This method provides access to the probability density that would result
+     * when supplying the same BSDF context and surface interaction data
+     * structures to the \ref sample() method. It correctly handles changes in
+     * probability when only a subset of the components is chosen for sampling
+     * (this can be done using the \ref BSDFContext::component and \ref
+     * BSDFContext::type_mask fields).
+     *
+     * Note that the incident direction does not need to be explicitly
+     * specified. It is obtained from the field <tt>si.wi</tt>.
+     *
+     * \param ctx
+     *     A context data structure describing which lobes to evaluate,
+     *     and whether radiance or importance are being transported.
+     *
+     * \param si
+     *     A surface interaction data structure describing the underlying
+     *     surface position. The incident direction is obtained from
+     *     the field <tt>si.wi</tt>.
+     *
+     * \param wo
+     *     The outgoing direction
+     */
+    virtual Float wbsdf_pdf(const BSDFContext &ctx,
+                      const SurfaceInteraction3f &si,
+                      const Vector3f &wo,
+                      Mask active = true) const;
 
     /**
      * \brief Jointly evaluate the BSDF f(wi, wo) and the probability per unit
@@ -655,9 +772,12 @@ NAMESPACE_END(mitsuba)
 
 DRJIT_VCALL_TEMPLATE_BEGIN(mitsuba::BSDF)
     DRJIT_VCALL_METHOD(sample)
+    DRJIT_VCALL_METHOD(wbsdf_sample)
     DRJIT_VCALL_METHOD(eval)
+    DRJIT_VCALL_METHOD(wbsdf_eval)
     DRJIT_VCALL_METHOD(eval_null_transmission)
     DRJIT_VCALL_METHOD(pdf)
+    DRJIT_VCALL_METHOD(wbsdf_pdf)
     DRJIT_VCALL_METHOD(eval_pdf)
     DRJIT_VCALL_METHOD(eval_pdf_sample)
     DRJIT_VCALL_METHOD(eval_diffuse_reflectance)

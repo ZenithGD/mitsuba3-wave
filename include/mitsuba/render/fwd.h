@@ -61,6 +61,7 @@ template <typename Float_, typename Spectrum_> struct RenderAliases {
 
     using Ray3f                     = Ray<Point<Float, 3>, Spectrum>;
     using RayDifferential3f         = RayDifferential<Point<Float, 3>, Spectrum>;
+    using GeneralizedRay3f          = GeneralizedRay<Point<Float, 3>, Spectrum>;
 
     using PositionSample3f          = PositionSample<Float, Spectrum>;
     using DirectionSample3f         = DirectionSample<Float, Spectrum>;
@@ -156,7 +157,7 @@ template <typename Float_, typename Spectrum_> struct RenderAliases {
     using SurfaceInteraction3f      = typename RenderAliases::SurfaceInteraction3f;                \
     using MediumInteraction3f       = typename RenderAliases::MediumInteraction3f;                 \
     using PreliminaryIntersection3f = typename RenderAliases::PreliminaryIntersection3f;           \
-    using BSDFSample3f              = typename RenderAliases::BSDFSample3f;                        \
+    using BSDFSample3f              = typename RenderAliases::BSDFSample3f;                                \
     using SilhouetteSample3f        = typename RenderAliases::SilhouetteSample3f;                  \
     DRJIT_MAP(MI_IMPORT_TYPES_MACRO, __VA_ARGS__)
 

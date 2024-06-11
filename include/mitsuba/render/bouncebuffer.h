@@ -18,11 +18,12 @@ struct BounceData {
     using Spectrum = Spectrum_;
     MI_IMPORT_RENDER_BASIC_TYPES()
     MI_IMPORT_OBJECT_TYPES()
-    
+        
     Interaction<Float, Spectrum> interaction;
-    Ray3f ray;
-
-    // Add more if needed
+    const Vector3f& wi;
+    const BSDFFlags& bsdf_flags;
+    Float path_contrib;
+    Float last_nondelta_pdf;
 };
 
 /**
@@ -35,6 +36,8 @@ public:
 
     using Float    = Float_;
     using Spectrum = Spectrum_;
+    using BounceDataTp = BounceData<Float, Spectrum>;
+
     MI_IMPORT_RENDER_BASIC_TYPES()
     MI_IMPORT_OBJECT_TYPES()
 
@@ -52,7 +55,7 @@ public:
      * 
      * \return BounceData& 
      */
-    BounceData& read_last_bounce() const {
+    BounceDataTp& read_last_bounce() const {
         return m_bdata.at(m_bdata.end());
     }
 
@@ -69,17 +72,26 @@ public:
      * \param it The interaction with the scene (which can be an empty interaction.)
      * \param r 
      */
-    void push_bounce(const Interaction& it, const Ray3f& r) {
-        BounceData bd;
-        bd.intersection = it;
-        bd.ray = r;
+    void push_bounce(
+        const Interaction<Float, Spectrum>& it, 
+        const Vector3f& wi, 
+        const BSDFFlags& bsdf_flags,
+        const Float contrib,
+        const Float ndpdf) {
+
+        BounceDataTp bd;
+        bd.interaction = it;
+        bd.wi = wi;
+        bd.bsdf_flags = bsdf_flags;
+        bd.path_contrib = contrib;
+        bd.last_nondelta_pdf = ndpdf;
 
         m_bdata.push_back(bd);
     }
     
 private:
-    std::vector<BounceData> m_bdata;
+    std::vector<BounceDataTp> m_bdata;
     Vector3f m_sensor_origin;
 };
 
-NAMESPACE_END()
+NAMESPACE_END(mitsuba)

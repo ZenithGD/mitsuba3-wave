@@ -60,6 +60,7 @@ template <typename Value, size_t Size>          struct Spectrum;
 template <typename Point>                       struct Transform;
 template <typename Point, typename Spectrum>    struct Ray;
 template <typename Point, typename Spectrum>    struct RayDifferential;
+template <typename Point, typename Spectrum>    struct GeneralizedRay;
 template <typename Point>                       struct BoundingBox;
 template <typename Point>                       struct BoundingSphere;
 template <typename Vector>                      struct Frame;

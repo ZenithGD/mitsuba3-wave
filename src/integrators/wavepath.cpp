@@ -6,6 +6,9 @@
 #include <mitsuba/render/integrator.h>
 #include <mitsuba/render/records.h>
 
+#include <mitsuba/render/bouncebuffer.h>
+#include <mitsuba/render/plt.h>
+
 NAMESPACE_BEGIN(mitsuba)
 
 /**!
@@ -120,6 +123,10 @@ public:
         Bool          prev_bsdf_delta = true;
         BSDFContext   bsdf_ctx;
 
+        // Create bounce buffer for forward path PLT solve
+        BounceBuffer<Float, Spectrum> bb(ray_.o);
+        Coherence<Float, Spectrum> cmat(Float(0.f), 0.f);
+
         /* Set up a Dr.Jit loop. This optimizes away to a normal loop in scalar
            mode, and it generates either a a megakernel (default) or
            wavefront-style renderer in JIT variants. This can be controlled by
@@ -132,7 +139,7 @@ public:
            lead to undefined behavior. */
         dr::Loop<Bool> loop("Path Tracer", sampler, ray, throughput, result,
                             eta, depth, valid_ray, prev_si, prev_bsdf_pdf,
-                            prev_bsdf_delta, active);
+                            prev_bsdf_delta, active, bb, cmat);
 
         /* Inform the loop about the maximum number of loop iterations.
            This accelerates wavefront-style rendering by avoiding costly

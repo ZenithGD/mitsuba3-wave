@@ -11,6 +11,41 @@ MI_VARIANT BSDF<Float, Spectrum>::BSDF(const Properties &props)
 
 MI_VARIANT BSDF<Float, Spectrum>::~BSDF() { }
 
+MI_VARIANT std::pair<typename BSDF<Float, Spectrum>::BSDFSample3f, GeneralizedRadiance<Float, Spectrum>>
+BSDF<Float, Spectrum>::wbsdf_sample( 
+    const BSDFContext &ctx,
+    const SurfaceInteraction3f &si,
+    Float sample1,
+    const Point2f &sample2,
+    Mask active) const
+{
+    auto [ sample, weight ] = sample(ctx, si, sample1, sample2, active);
+
+    GeneralizedRadiance<Float, Spectrum> gr(weight);
+
+    return { sample, gr };     
+}
+
+MI_VARIANT GeneralizedRadiance<Float, Spectrum> 
+BSDF<Float, Spectrum>::wbsdf_eval(const BSDFContext &ctx,
+    const SurfaceInteraction3f &si,
+    const Vector3f &wo,
+    Mask active) const 
+{
+    GeneralizedRadiance<Float, Spectrum> gr(eval(ctx, si, wo, active));
+
+    return gr;
+}
+
+MI_VARIANT Float 
+BSDF<Float, Spectrum>::wbsdf_pdf(const BSDFContext &ctx,
+    const SurfaceInteraction3f &si,
+    const Vector3f &wo,
+    Mask active) const
+{
+    return pdf(ctx, si, wo, active);
+}
+
 MI_VARIANT std::pair<Spectrum, Float>
 BSDF<Float, Spectrum>::eval_pdf(const BSDFContext &ctx,
                                 const SurfaceInteraction3f &si,

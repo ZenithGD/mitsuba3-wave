@@ -3,6 +3,8 @@
 #include <mitsuba/core/properties.h>
 #include <mitsuba/python/python.h>
 
+#include <mitsuba/render/plt.h>
+
 MI_PY_EXPORT(BSDFSample) {
     MI_PY_IMPORT_TYPES()
 
@@ -38,6 +40,15 @@ public:
         PYBIND11_OVERRIDE_PURE(Return, BSDF, sample, ctx, si, sample1, sample2, active);
     }
 
+    // sample wbsdf python definition
+    std::pair<BSDFSample3f, GeneralizedRadiance<Float, Spectrum>>
+    wbsdf_sample(const BSDFContext &ctx, const SurfaceInteraction3f &si,
+           Float sample1, const Point2f &sample2,
+           Mask active) const override {
+        using Return = std::pair<BSDFSample3f, GeneralizedRadiance<Float, Spectrum>>;
+        PYBIND11_OVERRIDE(Return, BSDF, wbsdf_sample, ctx, si, sample1, sample2, active);
+    }
+
     Spectrum eval(const BSDFContext &ctx,
                   const SurfaceInteraction3f &si,
                   const Vector3f &wo,
@@ -45,11 +56,26 @@ public:
         PYBIND11_OVERRIDE_PURE(Spectrum, BSDF, eval, ctx, si, wo, active);
     }
 
+    GeneralizedRadiance<Float, Spectrum> wbsdf_eval(const BSDFContext &ctx,
+                          const SurfaceInteraction3f &si,
+                          const Vector3f &wo,
+                          Mask active = true) const override {
+        using Return = GeneralizedRadiance<Float, Spectrum>;
+        PYBIND11_OVERRIDE(Return, BSDF, wbsdf_eval, ctx, si, wo, active);
+    }
+
     Float pdf(const BSDFContext &ctx,
               const SurfaceInteraction3f &si,
               const Vector3f &wo,
               Mask active) const override {
         PYBIND11_OVERRIDE_PURE(Float, BSDF, pdf, ctx, si, wo, active);
+    }
+
+    Float wbsdf_pdf(const BSDFContext &ctx,
+              const SurfaceInteraction3f &si,
+              const Vector3f &wo,
+              Mask active) const override {
+        PYBIND11_OVERRIDE(Float, BSDF, wbsdf_pdf, ctx, si, wo, active);
     }
 
     std::pair<Spectrum, Float> eval_pdf(const BSDFContext &ctx,
@@ -106,15 +132,31 @@ template <typename Ptr, typename Cls> void bind_bsdf_generic(Cls &cls) {
                 return bsdf->sample(ctx, si, sample1, sample2, active);
             }, "ctx"_a, "si"_a, "sample1"_a, "sample2"_a,
             "active"_a = true, D(BSDF, sample))
+        .def("wbsdf_sample",
+            [](Ptr bsdf, const BSDFContext &ctx, const SurfaceInteraction3f &si,
+               Float sample1, const Point2f &sample2, Mask active) {
+                return bsdf->wbsdf_sample(ctx, si, sample1, sample2, active);
+            }, "ctx"_a, "si"_a, "sample1"_a, "sample2"_a,
+            "active"_a = true, D(BSDF, sample))
         .def("eval",
              [](Ptr bsdf, const BSDFContext &ctx, const SurfaceInteraction3f &si,
                 const Vector3f &wo,
                 Mask active) { return bsdf->eval(ctx, si, wo, active);
              }, "ctx"_a, "si"_a, "wo"_a, "active"_a = true, D(BSDF, eval))
+        .def("wbsdf_eval",
+             [](Ptr bsdf, const BSDFContext &ctx, const SurfaceInteraction3f &si,
+                const Vector3f &wo,
+                Mask active) { return bsdf->wbsdf_eval(ctx, si, wo, active);
+             }, "ctx"_a, "si"_a, "wo"_a, "active"_a = true, D(BSDF, eval))
         .def("pdf",
              [](Ptr bsdf, const BSDFContext &ctx, const SurfaceInteraction3f &si,
                 const Vector3f &wo,
                 Mask active) { return bsdf->pdf(ctx, si, wo, active);
+             }, "ctx"_a, "si"_a, "wo"_a, "active"_a = true, D(BSDF, pdf))
+        .def("wbsdf_pdf",
+             [](Ptr bsdf, const BSDFContext &ctx, const SurfaceInteraction3f &si,
+                const Vector3f &wo,
+                Mask active) { return bsdf->wbsdf_pdf(ctx, si, wo, active);
              }, "ctx"_a, "si"_a, "wo"_a, "active"_a = true, D(BSDF, pdf))
         .def("eval_pdf",
              [](Ptr bsdf, const BSDFContext &ctx, const SurfaceInteraction3f &si,
