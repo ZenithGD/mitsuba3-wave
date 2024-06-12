@@ -600,3 +600,5 @@ install(
   DIRECTORY ${MI_BINARY_DIR}/data/ior
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}
 )
+
+message(STATUS "ok!")

@@ -4,6 +4,10 @@
 #include <mitsuba/render/bsdf.h>
 #include <mitsuba/render/texture.h>
 
+#include <mitsuba/render/plt.h>
+
+#include <mitsuba/plt/diffractionGrating.h>
+
 NAMESPACE_BEGIN(mitsuba)
 
 /**!
@@ -124,6 +128,9 @@ public:
         return { bs, depolarizer<Spectrum>(value) & (active && bs.pdf > 0.f) };
     }
 
+    // Note: Diffuse interaction doesn't need to be implemented because it already returns a depolarized
+    // ideal diffuse interaction.
+
     Spectrum eval(const BSDFContext &ctx, const SurfaceInteraction3f &si,
                   const Vector3f &wo, Mask active) const override {
         MI_MASKED_FUNCTION(ProfilerPhase::BSDFEvaluate, active);
@@ -140,6 +147,20 @@ public:
             m_reflectance->eval(si, active) * dr::InvPi<Float> * cos_theta_o;
 
         return depolarizer<Spectrum>(value) & active;
+    }
+
+    GeneralizedRadiance<Float, Spectrum> wbsdf_eval(const BSDFContext &ctx, const SurfaceInteraction3f &si,
+                  const Vector3f &wo, Mask active) const override {
+        MI_MASKED_FUNCTION(ProfilerPhase::BSDFEvaluate, active);
+        
+        GeneralizedRadiance<Float, Spectrum> ev = BSDF::wbsdf_eval(ctx, si, wo, active);
+
+        // coherence transform should be applied
+        Float cos_theta_o = Frame3f::cos_theta(wo);
+        ev.coherence = Coherence<Float, Spectrum>(Matrix2f(cos_theta_o, 0.0f,
+                                                  0.0f,        1.f/cos_theta_o), 0.0f);
+
+        return ev;
     }
 
     Float pdf(const BSDFContext &ctx, const SurfaceInteraction3f &si,

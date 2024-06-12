@@ -156,6 +156,18 @@ std::pair<Value, Value> legendre_pd_diff(int l, Value x) {
 // -----------------------------------------------------------------------
 
 /**
+ * \brief Simple approximation of the sinc function sin x / x
+ * 
+ * \tparam T A floating point type
+ * \param x The argument to evaluate
+ * \return T sin x / x
+ */
+template <typename T> T sinc(const T& x) {
+    x = dr::abs(x);
+    return dr::select(x < 1e-5f, 1.0f, dr::sin(x) / x);
+}
+
+/**
  * \brief Compare the difference in ULPs between a reference value and another
  * given floating point number
  */
