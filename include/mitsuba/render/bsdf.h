@@ -4,7 +4,7 @@
 #include <mitsuba/render/interaction.h>
 #include <drjit/vcall.h>
 
-#include <mitsuba/render/plt.h>
+#include <mitsuba/plt/plt.h>
 
 NAMESPACE_BEGIN(mitsuba)
 
@@ -237,6 +237,32 @@ template <typename Float, typename Spectrum> struct BSDFSample3 {
     // =============================================================
 
     DRJIT_STRUCT(BSDFSample3, wo, pdf, eta, sampled_type, sampled_component);
+};
+
+
+template <typename Float, typename Spectrum>
+struct PLTInteraction {
+    // =============================================================
+    //! @{ \name Type declarations
+    // =============================================================
+
+    using Vector3f = Vector<Float, 3>;
+
+    //! @}
+    // =============================================================
+
+    // =============================================================
+    //! @{ \name Fields
+    // =============================================================
+    
+    /// \brief spatial coherence
+    Coherence<Float, Spectrum> sp_coherence;
+
+    /// \brief tangent (horizontal) propagation direction of the wave
+    Vector3f t;
+
+    //! @}
+    // =============================================================
 };
 
 

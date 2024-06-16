@@ -2,6 +2,8 @@
 #include <mitsuba/core/math.h>
 #include <mitsuba/core/spectrum.h>
 
+#include <mitsuba/plt/plt.h>
+
 NAMESPACE_BEGIN(mitsuba)
 
 enum class DiffractionGratingType {

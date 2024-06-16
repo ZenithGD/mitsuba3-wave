@@ -2,7 +2,7 @@
 
 #include <mitsuba/core/fwd.h>
 
-#include <mitsuba/render/plt.h>
+#include <mitsuba/plt/plt.h>
 
 NAMESPACE_BEGIN(mitsuba)
 

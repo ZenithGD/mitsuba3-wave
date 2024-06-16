@@ -7,7 +7,7 @@
 #include <mitsuba/render/records.h>
 
 #include <mitsuba/render/bouncebuffer.h>
-#include <mitsuba/render/plt.h>
+#include <mitsuba/plt/plt.h>
 
 NAMESPACE_BEGIN(mitsuba)
 

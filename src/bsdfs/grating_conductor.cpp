@@ -10,88 +10,13 @@
 
 NAMESPACE_BEGIN(mitsuba)
 
-/**!
-
-.. _bsdf-diffuse:
-
-Smooth diffuse material (:monosp:`diffuse`)
--------------------------------------------
-
-.. pluginparameters::
-
- * - reflectance
-   - |spectrum| or |texture|
-   - Specifies the diffuse albedo of the material (Default: 0.5)
-   - |exposed|, |differentiable|
-
-The smooth diffuse material (also referred to as *Lambertian*)
-represents an ideally diffuse material with a user-specified amount of
-reflectance. Any received illumination is scattered so that the surface
-looks the same independently of the direction of observation.
-
-.. subfigstart::
-.. subfigure:: ../../resources/data/docs/images/render/bsdf_diffuse_plain.jpg
-   :caption: Homogeneous reflectance
-.. subfigure:: ../../resources/data/docs/images/render/bsdf_diffuse_textured.jpg
-   :caption: Textured reflectance
-.. subfigend::
-   :label: fig-diffuse
-
-Apart from a homogeneous reflectance value, the plugin can also accept
-a nested or referenced texture map to be used as the source of reflectance
-information, which is then mapped onto the shape based on its UV
-parameterization. When no parameters are specified, the model uses the default
-of 50% reflectance.
-
-Note that this material is one-sided---that is, observed from the
-back side, it will be completely black. If this is undesirable,
-consider using the :ref:`twosided <bsdf-twosided>` BRDF adapter plugin.
-The following XML snippet describes a diffuse material,
-whose reflectance is specified as an sRGB color:
-
-.. tabs::
-    .. code-tab:: xml
-        :name: diffuse-srgb
-
-        <bsdf type="diffuse">
-            <rgb name="reflectance" value="0.2, 0.25, 0.7"/>
-        </bsdf>
-
-    .. code-tab:: python
-
-        'type': 'diffuse',
-        'reflectance': {
-            'type': 'rgb',
-            'value': [0.2, 0.25, 0.7]
-        }
-
-Alternatively, the reflectance can be textured:
-
-.. tabs::
-    .. code-tab:: xml
-        :name: diffuse-texture
-
-        <bsdf type="diffuse">
-            <texture type="bitmap" name="reflectance">
-                <string name="filename" value="wood.jpg"/>
-            </texture>
-        </bsdf>
-
-    .. code-tab:: python
-
-        'type': 'diffuse',
-        'reflectance': {
-            'type': 'bitmap',
-            'filename': 'wood.jpg'
-        }
-*/
 template <typename Float, typename Spectrum>
-class SmoothDiffuse final : public BSDF<Float, Spectrum> {
+class GratingConductor final : public BSDF<Float, Spectrum> {
 public:
     MI_IMPORT_BASE(BSDF, m_flags, m_components)
     MI_IMPORT_TYPES(Texture)
 
-    SmoothDiffuse(const Properties &props) : Base(props) {
+    GratingConductor(const Properties &props) : Base(props) {
         m_reflectance = props.texture<Texture>("reflectance", .5f);
         m_flags = BSDFFlags::DiffuseReflection | BSDFFlags::FrontSide;
         dr::set_attr(this, "flags", m_flags);
@@ -207,7 +132,7 @@ public:
 
     std::string to_string() const override {
         std::ostringstream oss;
-        oss << "SmoothDiffuse[" << std::endl
+        oss << "GratingConductor[" << std::endl
             << "  reflectance = " << string::indent(m_reflectance) << std::endl
             << "]";
         return oss.str();
@@ -216,8 +141,13 @@ public:
     MI_DECLARE_CLASS()
 private:
     ref<Texture> m_reflectance;
+
+    // grating object
+    // TODO: create object so that it can be parsed by Mitsuba's scene description
+    // interpreter.
+    std::shared_ptr<DiffractionGrating<Float, Spectrum>> grating; 
 };
 
-MI_IMPLEMENT_CLASS_VARIANT(SmoothDiffuse, BSDF)
-MI_EXPORT_PLUGIN(SmoothDiffuse, "Smooth diffuse material")
+MI_IMPLEMENT_CLASS_VARIANT(GratingConductor, BSDF)
+MI_EXPORT_PLUGIN(GratingConductor, "Diffraction Grating conductor material")
 NAMESPACE_END(mitsuba)

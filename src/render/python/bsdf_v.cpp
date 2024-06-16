@@ -3,7 +3,7 @@
 #include <mitsuba/core/properties.h>
 #include <mitsuba/python/python.h>
 
-#include <mitsuba/render/plt.h>
+#include <mitsuba/plt/plt.h>
 
 MI_PY_EXPORT(BSDFSample) {
     MI_PY_IMPORT_TYPES()
