@@ -6,7 +6,7 @@
 
 NAMESPACE_BEGIN(mitsuba)
 
-enum class DiffractionGratingType {
+enum class DiffractionGratingType : uint32_t {
     Sinusoidal  = 0x00,
     Rectangular = 0x01,
     Linear      = 0x02,
@@ -14,6 +14,8 @@ enum class DiffractionGratingType {
 
     TypeMask    = 0xF,
 };
+
+MI_DECLARE_ENUM_OPERATORS(DiffractionGratingType)
 
 static const int diffractionGratingsMaxLobes = 8;
 
@@ -35,7 +37,7 @@ public:
         }
         else 
         {
-            // radial grating following UV direction + rotation angle
+            // radial grating following UV vector + rotation angle
             const Vector2f radial = dr::normalize(uv - Vector2f(0.5f, 0.5f));
             m_gratingDir = Matrix2f(
                  cos(grating_angle), sin(grating_angles),
@@ -111,6 +113,7 @@ private:
     /// \brief The inverse period of the grating
     Float m_inv_period;
 
+    /// @brief Height scale of the grating
     Float m_q;
 
     /// @brief Number of diffraction lobes
