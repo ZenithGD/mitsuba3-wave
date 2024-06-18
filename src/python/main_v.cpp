@@ -13,6 +13,8 @@
 #include <mitsuba/render/texture.h>
 #include <mitsuba/render/volume.h>
 
+#include <mitsuba/plt/plt.h>
+
 #include <mitsuba/python/python.h>
 
 
@@ -115,6 +117,9 @@ MI_PY_DECLARE(Texture);
 MI_PY_DECLARE(Volume);
 MI_PY_DECLARE(VolumeGrid);
 
+// plt
+MI_PY_DECLARE(Coherence);
+
 #define MODULE_NAME MI_MODULE_NAME(mitsuba, MI_VARIANT_NAME)
 
 using Caster = py::object(*)(mitsuba::Object *);
@@ -209,6 +214,9 @@ PYBIND11_MODULE(MODULE_NAME, m) {
     MI_PY_IMPORT(Texture);
     MI_PY_IMPORT(Volume);
     MI_PY_IMPORT(VolumeGrid);
+
+    // plt
+    MI_PY_IMPORT(Coherence);
 
     py::object mitsuba_ext = py::module::import("mitsuba.mitsuba_ext");
     cast_object = (Caster) (void *)((py::capsule) mitsuba_ext.attr("cast_object"));

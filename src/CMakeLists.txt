@@ -4,10 +4,12 @@
 
 add_subdirectory(core)
 add_subdirectory(render)
+add_subdirectory(plt)
 
 add_library(mitsuba SHARED)
 target_link_libraries(mitsuba PUBLIC mitsuba-core)
 target_link_libraries(mitsuba PUBLIC mitsuba-render)
+target_link_libraries(mitsuba PUBLIC mitsuba-plt)
 set_target_properties(mitsuba PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "^(GNU)$")

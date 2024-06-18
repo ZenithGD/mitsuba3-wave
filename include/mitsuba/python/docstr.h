@@ -12595,6 +12595,23 @@ static const char *__doc_mitsuba_xyz_to_srgb = R"doc(Convert XYZ tristimulus val
 
 static const char *__doc_operator_lshift = R"doc(Turns a vector of elements into a human-readable representation)doc";
 
+static const char *__doc_mitsuba_Coherence = R"doc()doc";
+
+static const char *__doc_mitsuba_Coherence_dmat = R"doc()doc";
+
+static const char *__doc_mitsuba_Coherence_opl = R"doc()doc";
+
+static const char *__doc_mitsuba_Coherence_Coherence = R"doc()doc";
+
+static const char *__doc_mitsuba_Coherence_Coherence_2 = R"doc()doc";
+
+static const char *__doc_mitsuba_Coherence_Coherence_3 = R"doc()doc";
+
+static const char *__doc_mitsuba_Coherence_rmm = R"doc()doc";
+
+static const char *__doc_mitsuba_Coherence_inv_coherence_matrix = R"doc()doc";
+
+
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop
 #endif

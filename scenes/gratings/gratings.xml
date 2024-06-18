@@ -2,7 +2,7 @@
 
 <!-- Defaults, these can be set via the command line: -Darg=value -->
 
-	<default name="spp" value="128"/>
+	<default name="spp" value="512"/>
 	<default name="resx" value="500"/>
 	<default name="resy" value="500"/>
 
@@ -40,7 +40,7 @@
 	</bsdf>
 	<bsdf type="twosided" id="mat-Material.001" name="mat-Material.001">
 		<bsdf type="roughconductor" name="bsdf">
-			<float name="alpha" value="0.002439"/>
+			<float name="alpha" value="0.02"/>
 			<string name="distribution" value="ggx"/>
 			<rgb value="0.000000 0.210739 0.801912" name="specular_reflectance"/>
 		</bsdf>

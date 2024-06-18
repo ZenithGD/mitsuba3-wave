@@ -16,6 +16,9 @@ def diffuse_dispersion(args):
             'value': [0.3, 0.5, 0.7]
         }
     })
+
+    mi
+
     # bsdf = mi.load_dict({
     #     'type': 'roughconductor',
     #     'alpha': 0.2,

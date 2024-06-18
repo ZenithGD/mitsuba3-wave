@@ -7,6 +7,7 @@
 #include <mitsuba/mitsuba.h>
 #include <mitsuba/core/object.h>
 #include <mitsuba/render/fwd.h>
+#include <mitsuba/plt/fwd.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 #include <pybind11/functional.h>
@@ -141,11 +142,16 @@ template <typename Type> pybind11::handle get_type_handle() {
 #define MI_MODULE_NAME_1(lib, variant) lib##_##variant##_ext
 #define MI_MODULE_NAME(lib, variant) MI_MODULE_NAME_1(lib, variant)
 
-#define MI_PY_IMPORT_TYPES(...)                                                                   \
-    using Float    = MI_VARIANT_FLOAT;                                                            \
-    using Spectrum = MI_VARIANT_SPECTRUM;                                                         \
-    MI_IMPORT_TYPES(__VA_ARGS__)                                                                  \
+#define MI_PY_IMPORT_TYPES(...)            \
+    using Float    = MI_VARIANT_FLOAT;     \
+    using Spectrum = MI_VARIANT_SPECTRUM;  \
+    MI_IMPORT_TYPES(__VA_ARGS__)           \
     MI_IMPORT_OBJECT_TYPES()
+
+#define MI_PY_IMPORT_PLT_TYPES(...)            \
+    using Float    = MI_VARIANT_FLOAT;     \
+    using Spectrum = MI_VARIANT_SPECTRUM;  \
+    MI_IMPORT_PLT_TYPES(__VA_ARGS__)           
 
 inline py::module_ create_submodule(py::module_ &m, const char *name) {
     std::string full_name = std::string(PyModule_GetName(m.ptr())) + "." + name;

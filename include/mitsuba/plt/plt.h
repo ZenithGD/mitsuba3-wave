@@ -5,6 +5,9 @@
 #include <mitsuba/core/math.h>
 #include <mitsuba/core/spectrum.h>
 
+#include <mitsuba/render/fwd.h>
+#include <mitsuba/plt/fwd.h>
+
 NAMESPACE_BEGIN(mitsuba)
 
 template <typename Float, typename Spectrum>
@@ -19,7 +22,7 @@ public:
      * \param l The current optical path length
      */
     Coherence(Float diffusivity, Float l)
-        : D(diffusivity, 0.f, 0.f, diffusivity), 
+        : dmat(diffusivity, 0.f, 0.f, diffusivity), 
           opl(l)
     {
 
@@ -32,7 +35,7 @@ public:
      * \param l The current optical path length
      */
     Coherence(Matrix2f diffm, Float l)
-        : D(diffm),
+        : dmat(diffm),
           opl(l)
     {}
 
@@ -41,7 +44,7 @@ public:
      * 
      * \return Float opl * 1e3f
      */
-    inline Float rmm() const { return opl * 1e+3f; }
+    Float rmm() const { return opl * 1e+3f; }
 
     void propagate(Float rd) {
         opl += rd;
@@ -55,7 +58,7 @@ public:
      * \return Matrix2f The inverse coherence matrix
      */
     Matrix2f inv_coherence_matrix(Float k) const {
-        return (k / (dr::TwoPi<Float> * rmm())) * D;
+        return (k / (dr::TwoPi<Float> * rmm())) * dmat;
     }
 
     /**
@@ -65,7 +68,7 @@ public:
      * \return Matrix2f The inverse coherence matrix
      */
     Matrix2f inv_coherence_matrix() const {
-        return (1.f / rmm()) * D;
+        return (1.f / rmm()) * dmat;
     }
 
     /**
@@ -89,24 +92,38 @@ public:
     }
 
     void transform(Matrix2f mat) {
-        D = dr::transpose(mat) * D * mat;
+        dmat = dr::transpose(mat) * dmat * mat;
     }
 
     /**
      * \brief Diffusivity matrix, which characterizes the WDF's angular variance
      * from the mean propagation direction.
      */
-    Matrix2f D;
+    Matrix2f dmat;
 
     // Distance travelled from source in meters
     Float opl;
 
-    DRJIT_STRUCT(Coherence, D, opl)
+    DRJIT_STRUCT(Coherence, dmat, opl)
 };
 
 template <typename Float, typename Spectrum>
-struct GeneralizedRadiance {
+extern std::ostream &operator<<(std::ostream &os,
+                                              const Coherence<Float, Spectrum>& ctx);
 
+template <typename Float, typename Spectrum>
+std::ostream &operator<<(std::ostream &os, const Coherence<Float, Spectrum>& coh) {
+    os << "Coherence[" << std::endl
+       << "  dmat = " << coh.dmat << "," << std::endl
+       << "  opl = "  << coh.opl << std::endl
+       << "]";
+    return os;
+}
+
+
+template <typename Float, typename Spectrum>
+struct GeneralizedRadiance {
+    MI_IMPORT_PLT_BASIC_TYPES()   
     /**
      * \brief The four vectors representing the Generalized Stokes Parameters
      * (GSp). It serves as a compact representation of the wave packet's state
@@ -128,6 +145,8 @@ struct GeneralizedRadiance {
     GeneralizedRadiance(const Spectrum L_) 
         : L(L_), L1(0.f), L2(0.f), L3(0.f) {} 
 
+
+
     DRJIT_STRUCT(GeneralizedRadiance, L, L1, L2, L3, coherence)
 };
 
@@ -146,7 +165,7 @@ struct GeneralizedRay : Ray<Point_, Spectrum_> {
     MI_USING_TYPES(Float, Point, Vector, Wavelength)
     MI_USING_MEMBERS(o, d, maxt, time, wavelengths)
 
-    Coherence<Float, Spectrum> coherence;
+    Coherence<Point_, Spectrum_> coherence;
 
     GeneralizedRay(const Base &ray) : Base(ray) {}
 

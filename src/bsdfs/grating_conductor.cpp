@@ -6,7 +6,7 @@
 #include <mitsuba/render/texture.h>
 
 #include <mitsuba/plt/plt.h>
-#include <mitsuba/plt/diffractionGrating.h>
+#include <mitsuba/plt/diffractiongrating.h>
 
 NAMESPACE_BEGIN(mitsuba)
 

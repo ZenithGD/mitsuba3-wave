@@ -23,6 +23,7 @@ foreach (MI_VARIANT ${MI_VARIANTS})
       main_v.cpp
       ${CORE_PY_V_SRC}
       ${RENDER_PY_V_SRC}
+      ${PLT_PY_V_SRC}
   )
 
   target_compile_definitions(${TARGET_NAME} PRIVATE
@@ -51,6 +52,7 @@ pybind11_add_module(mitsuba_ext
   main.cpp
   ${CORE_PY_SRC}
   ${RENDER_PY_SRC}
+  ${PLT_PY_SRC}
 )
 
 # macOS: Avoid warnings about loop unrolling being disabled with -Os
