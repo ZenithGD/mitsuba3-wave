@@ -15,6 +15,7 @@ MI_VARIANT std::pair<typename BSDF<Float, Spectrum>::BSDFSample3f, GeneralizedRa
 BSDF<Float, Spectrum>::wbsdf_sample( 
     const BSDFContext &ctx,
     const SurfaceInteraction3f &si,
+    const PLTInteraction3f& pit,
     Float sample1,
     const Point2f &sample2,
     Mask active) const
@@ -29,6 +30,7 @@ BSDF<Float, Spectrum>::wbsdf_sample(
 MI_VARIANT GeneralizedRadiance<Float, Spectrum> 
 BSDF<Float, Spectrum>::wbsdf_eval(const BSDFContext &ctx,
     const SurfaceInteraction3f &si,
+    const PLTInteraction3f& pit,
     const Vector3f &wo,
     Mask active) const 
 {
@@ -40,6 +42,7 @@ BSDF<Float, Spectrum>::wbsdf_eval(const BSDFContext &ctx,
 MI_VARIANT Float 
 BSDF<Float, Spectrum>::wbsdf_pdf(const BSDFContext &ctx,
     const SurfaceInteraction3f &si,
+    const PLTInteraction3f& pit,
     const Vector3f &wo,
     Mask active) const
 {

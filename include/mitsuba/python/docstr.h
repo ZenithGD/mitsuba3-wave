@@ -12611,6 +12611,37 @@ static const char *__doc_mitsuba_Coherence_rmm = R"doc()doc";
 
 static const char *__doc_mitsuba_Coherence_inv_coherence_matrix = R"doc()doc";
 
+static const char *__doc_mitsuba_Coherence_inv_coherence_matrix_2 = R"doc()doc";
+
+static const char *__doc_mitsuba_Coherence_inv_coherence_det = R"doc()doc";
+
+static const char *__doc_mitsuba_Coherence_inv_coherence_det_2 = R"doc()doc";
+
+static const char *__doc_mitsuba_Coherence_transform = R"doc()doc";
+
+static const char *__doc_mitsuba_GeneralizedRadiance = R"doc()doc";
+
+static const char *__doc_mitsuba_GeneralizedRadiance_L = R"doc()doc";
+
+static const char *__doc_mitsuba_GeneralizedRadiance_L1 = R"doc()doc";
+
+static const char *__doc_mitsuba_GeneralizedRadiance_L2 = R"doc()doc";
+
+static const char *__doc_mitsuba_GeneralizedRadiance_L3 = R"doc()doc";
+
+static const char *__doc_mitsuba_GeneralizedRadiance_coherence = R"doc()doc";
+
+static const char *__doc_mitsuba_GeneralizedRadiance_GeneralizedRadiance = R"doc()doc";
+
+static const char *__doc_mitsuba_GeneralizedRadiance_GeneralizedRadiance_2 = R"doc()doc";
+
+static const char *__doc_mitsuba_PLTInteraction_sp_coherence = R"doc()doc";
+
+static const char *__doc_mitsuba_PLTInteraction = R"doc()doc";
+
+static const char *__doc_mitsuba_PLTInteraction_t = R"doc()doc";
+
+static const char *__doc_mitsuba_PLTInteraction_PLTInteraction = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

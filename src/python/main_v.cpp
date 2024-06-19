@@ -117,8 +117,10 @@ MI_PY_DECLARE(Texture);
 MI_PY_DECLARE(Volume);
 MI_PY_DECLARE(VolumeGrid);
 
-// plt
+// plt module declarations
 MI_PY_DECLARE(Coherence);
+MI_PY_DECLARE(GeneralizedRadiance);
+MI_PY_DECLARE(PLTInteraction);
 
 #define MODULE_NAME MI_MODULE_NAME(mitsuba, MI_VARIANT_NAME)
 
@@ -217,6 +219,8 @@ PYBIND11_MODULE(MODULE_NAME, m) {
 
     // plt
     MI_PY_IMPORT(Coherence);
+    MI_PY_IMPORT(GeneralizedRadiance);
+    MI_PY_IMPORT(PLTInteraction);
 
     py::object mitsuba_ext = py::module::import("mitsuba.mitsuba_ext");
     cast_object = (Caster) (void *)((py::capsule) mitsuba_ext.attr("cast_object"));

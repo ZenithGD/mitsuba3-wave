@@ -17,15 +17,6 @@ def diffuse_dispersion(args):
         }
     })
 
-    mi
-
-    # bsdf = mi.load_dict({
-    #     'type': 'roughconductor',
-    #     'alpha': 0.2,
-    #     'distribution': 'ggx'
-    # })
-    # since diffuse materials are not delta materials, we eval on the whole hemisphere
-
     # Create a (dummy) surface interaction to use for the evaluation of the BSDF
     si = dr.zeros(mi.SurfaceInteraction3f)
 
@@ -39,8 +30,10 @@ def diffuse_dispersion(args):
     wo = sph_to_dir(theta_o, 0.0)
 
     # Evaluate the whole array (18000 directions) at once
-    values = bsdf.eval(mi.BSDFContext(), si, wo)
-    values_np = np.array(values)
+    values = bsdf.wbsdf_eval(mi.BSDFContext(), si, mi.PLTInteraction3f(), wo)
+    values_np = np.array(values.L)
+
+    print(values)
 
     # Extract channels of BRDF values
     values_r = values_np[:, 0]

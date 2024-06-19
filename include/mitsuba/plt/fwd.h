@@ -6,7 +6,7 @@
 
 NAMESPACE_BEGIN(mitsuba)
 
-// template <typename Float, typename Spectrum> struct PLTInteraction;
+template <typename Float, typename Spectrum> struct PLTInteraction;
 template <typename Float, typename Spectrum> struct GeneralizedRadiance;
 template <typename Float, typename Spectrum> class Coherence;
 
@@ -14,7 +14,7 @@ template <typename Float_, typename Spectrum_> struct PLTAliases {
     using Float                     = Float_;
     using Spectrum                  = Spectrum_;
 
-    // using PLTInteraction3f      = PLTInteraction<Float, Spectrum>;
+    using PLTInteraction3f      = PLTInteraction<Float, Spectrum>;
     using Coherence3f           = Coherence<Float, Spectrum>;
     using GeneralizedRadiance3f = GeneralizedRadiance<Float, Spectrum>;
 };
@@ -24,7 +24,8 @@ template <typename Float_, typename Spectrum_> struct PLTAliases {
     MI_IMPORT_CORE_TYPES()                                                     \
     using PLTAliases            = mitsuba::PLTAliases<Float, Spectrum>;        \
     using Coherence3f           = typename PLTAliases::Coherence3f;            \
-    using GeneralizedRadiance3f = typename PLTAliases::GeneralizedRadiance3f;                   
+    using GeneralizedRadiance3f = typename PLTAliases::GeneralizedRadiance3f;  \
+    using PLTInteraction3f      = typename PLTAliases::PLTInteraction3f;                  
 
 #define MI_IMPORT_PLT_TYPES_MACRO(x) using x = typename PLTAliases::x;
 

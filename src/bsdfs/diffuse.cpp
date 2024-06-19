@@ -4,10 +4,6 @@
 #include <mitsuba/render/bsdf.h>
 #include <mitsuba/render/texture.h>
 
-#include <mitsuba/plt/plt.h>
-
-#include <mitsuba/plt/diffractiongrating.h>
-
 NAMESPACE_BEGIN(mitsuba)
 
 /**!
@@ -149,13 +145,14 @@ public:
         return depolarizer<Spectrum>(value) & active;
     }
 
-    GeneralizedRadiance<Float, Spectrum> wbsdf_eval(const BSDFContext &ctx, const SurfaceInteraction3f &si,
-                  const Vector3f &wo, Mask active) const override {
+    GeneralizedRadiance<Float, Spectrum> wbsdf_eval(const BSDFContext &ctx, 
+            const SurfaceInteraction3f &si, const PLTInteraction3f& pit,
+            const Vector3f &wo, Mask active) const override {
         MI_MASKED_FUNCTION(ProfilerPhase::BSDFEvaluate, active);
         
-        GeneralizedRadiance<Float, Spectrum> ev = BSDF::wbsdf_eval(ctx, si, wo, active);
+        GeneralizedRadiance<Float, Spectrum> ev = BSDF::wbsdf_eval(ctx, si, pit, wo, active);
 
-        // coherence transform should be applied
+        // coherence transform that should be applied
         Float cos_theta_o = Frame3f::cos_theta(wo);
         ev.coherence = Coherence<Float, Spectrum>(Matrix2f(cos_theta_o, 0.0f,
                                                   0.0f,        1.f/cos_theta_o), 0.0f);

@@ -109,7 +109,7 @@ public:
 
 template <typename Float, typename Spectrum>
 extern std::ostream &operator<<(std::ostream &os,
-                                              const Coherence<Float, Spectrum>& ctx);
+    const Coherence<Float, Spectrum>& ctx);
 
 template <typename Float, typename Spectrum>
 std::ostream &operator<<(std::ostream &os, const Coherence<Float, Spectrum>& coh) {
@@ -150,6 +150,62 @@ struct GeneralizedRadiance {
     DRJIT_STRUCT(GeneralizedRadiance, L, L1, L2, L3, coherence)
 };
 
+template <typename Float, typename Spectrum>
+extern std::ostream &operator<<(std::ostream &os,
+    const GeneralizedRadiance<Float, Spectrum>& ctx);
+
+template <typename Float, typename Spectrum>
+std::ostream &operator<<(std::ostream &os, const GeneralizedRadiance<Float, Spectrum>& gr) {
+    os << "GeneralizedRadiance[" << std::endl
+       << "  L = " << gr.L << "," << std::endl
+       << "  L1 = " << gr.L1 << "," << std::endl
+       << "  L2 = " << gr.L2 << "," << std::endl
+       << "  L3 = " << gr.L3 << "," << std::endl
+       << "  coherence = "  << string::indent(gr.coherence) << std::endl
+       << "]";
+    return os;
+}
+
+
+template <typename Float, typename Spectrum>
+struct PLTInteraction {
+    // =============================================================
+    //! @{ \name Type declarations
+    // =============================================================
+
+    using Vector3f = Vector<Float, 3>;
+
+    //! @}
+    // =============================================================
+
+    // =============================================================
+    //! @{ \name Fields
+    // =============================================================
+    
+    /// \brief spatial coherence
+    Coherence<Float, Spectrum> sp_coherence;
+
+    /// \brief tangent (horizontal) propagation direction of the wave
+    Vector3f t;
+
+    //! @}
+    // =============================================================
+    
+    DRJIT_STRUCT(PLTInteraction, sp_coherence, t)
+};
+
+template <typename Float, typename Spectrum>
+extern std::ostream &operator<<(std::ostream &os,
+    const PLTInteraction<Float, Spectrum>& it);
+
+template <typename Float, typename Spectrum>
+std::ostream &operator<<(std::ostream &os, const PLTInteraction<Float, Spectrum>& it) {
+    os << "PLTInteraction[" << std::endl
+       << "  sp_coherence = "  << string::indent(it.sp_coherence) << std::endl
+       << "  t = " << it.t << "," << std::endl
+       << "]";
+    return os;
+}
 
 /**
  * \brief Simple n-dimensional ray segment data structure

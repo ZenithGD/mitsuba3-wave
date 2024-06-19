@@ -1,3 +1,5 @@
+#pragma once
+
 #include <mitsuba/core/vector.h>
 #include <mitsuba/core/math.h>
 #include <mitsuba/core/spectrum.h>

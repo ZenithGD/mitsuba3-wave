@@ -4,6 +4,7 @@
 #include <mitsuba/render/interaction.h>
 #include <drjit/vcall.h>
 
+#include <mitsuba/plt/fwd.h>
 #include <mitsuba/plt/plt.h>
 
 NAMESPACE_BEGIN(mitsuba)
@@ -240,32 +241,6 @@ template <typename Float, typename Spectrum> struct BSDFSample3 {
 };
 
 
-template <typename Float, typename Spectrum>
-struct PLTInteraction {
-    // =============================================================
-    //! @{ \name Type declarations
-    // =============================================================
-
-    using Vector3f = Vector<Float, 3>;
-
-    //! @}
-    // =============================================================
-
-    // =============================================================
-    //! @{ \name Fields
-    // =============================================================
-    
-    /// \brief spatial coherence
-    Coherence<Float, Spectrum> sp_coherence;
-
-    /// \brief tangent (horizontal) propagation direction of the wave
-    Vector3f t;
-
-    //! @}
-    // =============================================================
-};
-
-
 /**
  * \brief Bidirectional Scattering Distribution Function (BSDF) interface
  *
@@ -294,6 +269,7 @@ template <typename Float, typename Spectrum>
 class MI_EXPORT_LIB BSDF : public Object {
 public:
     MI_IMPORT_TYPES(Texture)
+    MI_IMPORT_PLT_BASIC_TYPES()
 
     /**
      * \brief Importance sample the BSDF model
@@ -396,6 +372,7 @@ public:
     virtual std::pair<BSDFSample3f, GeneralizedRadiance<Float, Spectrum>>
     wbsdf_sample( const BSDFContext &ctx,
            const SurfaceInteraction3f &si,
+           const PLTInteraction3f& pit,
            Float sample1,
            const Point2f &sample2,
            Mask active = true) const;
@@ -457,6 +434,7 @@ public:
      */
     virtual GeneralizedRadiance<Float, Spectrum> wbsdf_eval(const BSDFContext &ctx,
                           const SurfaceInteraction3f &si,
+                          const PLTInteraction3f& pit,
                           const Vector3f &wo,
                           Mask active = true) const;
 
@@ -519,6 +497,7 @@ public:
      */
     virtual Float wbsdf_pdf(const BSDFContext &ctx,
                       const SurfaceInteraction3f &si,
+                      const PLTInteraction3f& pit,
                       const Vector3f &wo,
                       Mask active = true) const;
 
